@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Morty">
+
+
+
+
+
+<title>BUAA-OS-Lab0: 基础操作 | Morty&#39;s Dimension</title>
+
+
+
+    <link rel="icon" href="/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Morty&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Morty&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">BUAA-OS-Lab0: 基础操作</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Morty</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">March 15, 2025&nbsp;&nbsp;23:25:12</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="OS-Lab0-实验报告"><a href="#OS-Lab0-实验报告" class="headerlink" title="OS_Lab0 实验报告"></a>OS_Lab0 实验报告</h1><h2 id="思考题："><a href="#思考题：" class="headerlink" title="思考题："></a>思考题：</h2><h3 id="Thinking-0-1"><a href="#Thinking-0-1" class="headerlink" title="Thinking 0.1"></a>Thinking 0.1</h3><p><strong>Q:思考下列有关 Git 的问题：</strong><br>• 在前述已初始化的 <code>~/learnGit</code> 目录下，创建一个名为 <code>README.txt</code> 的文件。执<br>行命令 <code>git status &gt; Untracked.txt</code>（其中的 <code>&gt;</code> 为输出重定向，我们将在 <code>0.6.3</code> 中<br>详细介绍）。<br>• 在 <code>README.txt</code> 文件中添加任意文件内容，然后使用 <code>add</code> 命令，再执行命令 <code>git status &gt; Stage.txt</code>。<br>• 提交 <code>README.txt</code>，并在提交说明里写入自己的学号。<br>• 执行命令 <code>cat Untracked.txt</code> 和 <code>cat Stage.txt</code>，对比两次运行的结果，体会<br><code>README.txt</code> 两次所处位置的不同。<br>• 修改 <code>README.txt</code> 文件，再执行命令 <code>git status &gt; Modified.txt</code>。<br>• 执行命令 <code>cat Modified.txt</code>，观察其结果和第一次执行 <code>add</code> 命令之前的 <code>status</code> 是<br>否一样，并思考原因。</p>
+<p><strong>A: 不一样。</strong> 第一次add前<code>readme.txt</code>是未被跟踪的文件。而修改并提交后的<code>readme.txt</code>是暂存的文件，显示已修改。<br>原因是因为新建<code>readme.txt</code>时此文件之前没有被<code>add</code>过，暂存区中没有记录，所以显示未跟踪；之后<code>add</code>后暂存区有记录，但还没有加入到(<code>add</code>)到暂存区中，所以显示已修改。</p>
+<h3 id="Thinking-0-2"><a href="#Thinking-0-2" class="headerlink" title="Thinking 0.2"></a>Thinking 0.2</h3><p><img src="/../images/df8789423dbd029d592502f808f0f1b.png" alt="alt text"></p>
+<p><strong>Q: 仔细看看0.10，思考一下箭头中的 <code>add the file</code> 、<code>stage the file</code> 和<br><code>commit</code> 分别对应的是 <code>Git</code> 里的哪些命令呢?</strong></p>
+<p><strong>A:</strong> <code>add the file</code>是指<code>git add + git commit</code>,将文件加入暂存区并提交到本地仓库; <code>stage the file</code>是指<code>git add</code>,将文件加入暂存区； <code>commit</code>是指<code>git commit</code>,将在暂存区中的文件提交到本地仓库。</p>
+<h3 id="Thinking-0-3"><a href="#Thinking-0-3" class="headerlink" title="Thinking 0.3"></a>Thinking 0.3</h3><p><strong>Q:思考下列问题：</strong><br><strong>1. 代码文件 print.c 被错误删除时，应当使用什么命令将其恢复？<br>2. 代码文件 print.c 被错误删除后，执行了 <code>git rm print.c</code> 命令，此时应当<br>使用什么命令将其恢复?<br>3. 无关文件 hello.txt 已经被添加到暂存区时，如何在不删除此文件的前提下<br>将其移出暂存区?</strong></p>
+<p><strong>A:</strong> (1) 使用<code>git checkout print.c</code>命令，将暂存区中的文件恢复到工作区中，在这里可以将<strong>print.c</strong>恢复到工作区中。<br>(2) 使用<code>git reset HEAD print.c</code>撤销文件在暂存区中的修改，然后使用<code>git checkout print.c</code>将暂存区中的文件恢复到工作区中,从而恢复print.c。<br>(3) 使用<code>git rm --cached hello.txt</code>从暂存区中移除<code>hello.txt</code>。</p>
+<h3 id="Thinking-0-4"><a href="#Thinking-0-4" class="headerlink" title="Thinking 0.4"></a>Thinking 0.4</h3><p><strong>Q:思考下列有关 Git 的问题：<br>• 找到在 <code>/home/22xxxxxx/learnGit</code> 下刚刚创建的 <code>README.txt</code> 文件，若不存<br>在则新建该文件。<br>• 在文件里加入 <code>Testing 1，git add，git commit</code>，提交说明记为 1。<br>• 模仿上述做法，把 1 分别改为 2 和 3，再提交两次。<br>• 使用 <code>git log</code> 命令查看提交日志，看是否已经有三次提交，记下提交说明为<br>3 的哈希值a。<br>• 进行版本回退。执行命令 <code>git reset --hard HEAD^</code> 后，再执行 <code>git log</code>，观<br>察其变化。<br>• 找到提交说明为 1 的哈希值，执行命令 <code>git reset --hard &lt;hash&gt;</code> 后，再执<br>行 <code>git log</code>，观察其变化。<br>• 现在已经回到了旧版本，为了再次回到新版本，执行 <code>git reset --hard &lt;hash&gt;</code><br>，再执行 <code>git log</code>，观察其变化。</strong></p>
+<p><strong>A:</strong> (1) 执行操作，将三次<code>commit</code>命名为<code>&quot;first commit&quot;,&quot;second commit&quot;,&quot;third commit&quot;</code>。<br>(2) 第一次执行回撤指令后，版本回退到<code>&quot;second commit&quot;</code>版本。<br>(3) 执行<code>git reset --hard&lt;hash&gt;</code>后退到<code>&quot;first commit&quot;</code>版本。<br>(4) <code>git reset --hard&lt;hash&gt;</code>后退到<code>&quot;third commit&quot;</code>版本，同时执行<code>git log</code>后可以看到三次提交的记录。</p>
+<h3 id="Thinging-0-5"><a href="#Thinging-0-5" class="headerlink" title="Thinging 0.5"></a>Thinging 0.5</h3><p><strong>Q:执行如下命令, 并查看结果<br>• echo first<br>• echo second &gt; output.txt<br>• echo third &gt; output.txt<br>• echo forth &gt;&gt; output.txt</strong></p>
+<p><strong>A:</strong> (1) 执行第一条指令后，终端输出<code>&quot;first&quot;</code><br>(2) 执行第二条指令后，在文件<code>output.txt</code>中有字符<code>&quot;second&quot;</code><br>(3) 执行第三条指令后，文件<code>output.txt</code>中的内容被变为<code>&quot;third&quot;</code><br>(4) 执行第四条指令后，在文件<code>output.txt</code>中追加输出<code>&quot;forth&quot;</code>，内容变为<code>&quot;third\nforth&quot;</code></p>
+<p>这是因为在使用重定向后，文件内容被覆盖，变为输入内容，追加输出则在内容后输出。</p>
+<h3 id="Thinking-0-6"><a href="#Thinking-0-6" class="headerlink" title="Thinking 0.6"></a>Thinking 0.6</h3><p><strong>Q:使用你知道的方法（包括重定向）创建下图内容的文件（文件命名为 test），<br>将创建该文件的命令序列保存在 command 文件中，并将 test 文件作为批处理文件运行，将<br>运行结果输出至 result 文件中。给出 command 文件和 result 文件的内容，并对最后的结<br>果进行解释说明（可以从 test 文件的内容入手）. 具体实现的过程中思考下列问题: <code>echo echo Shell Start</code> 与 <code>echo &#39;echo Shell Start&#39;</code> 效果是否有区别; <code>echo echo $c&gt;file1</code><br>与 <code>echo &#39;echo $c&gt;file1&#39;</code> 效果是否有区别.</strong></p>
+<p><strong>A:</strong><br><img src="/../images/2dec75af98520a529811422eb148d3c.png" alt="alt text"></p>
+<center>command文件
+
+<p><img src="/../images/c20b0fa9367bb3f82a8d48cd1e8dd2b.png" alt="alt text"><br>result文件</center></p>
+<p>在<code>test</code>文件中先将<code>a,b</code>分别赋值为1和2,然后相加得到<code>c</code>，将<code>c,b,a</code>分别写入到<code>file1</code>,<code>file2</code>和<code>file3</code>,最后即将三个文件集合写入<code>file4</code>中。</p>
+<p><code>echo echo Shell Start</code>和<code>echo &#39;echo Shell Start&#39;</code>没有区别，都是输入到终端；<code>echo echo $&gt; file1</code> 和 <code>echo &#39;echo $c&gt;file1&#39;</code>有区别，<code>echo echo $c&gt;file1</code>是将<code>echo $c</code>重定向到<code>file1</code>中，<code>echo &#39;echo $c&gt;file1&#39;</code>是在终端输出<code>echo $c&gt;file1</code>。</p>
+<h2 id="实验难点分析："><a href="#实验难点分析：" class="headerlink" title="实验难点分析："></a>实验难点分析：</h2><p>本次实验主要是关于<code>git</code>的使用和简单的命令使用，主要的难点有<code>git</code>的版本管理和命令的实验。<br>关于<code>git</code>的使用，主要是在版本管理和版本回退方面的难点。在本次作业中，我就有不小心使用<code>git reset --hard^</code>返回了错误的版本导致代码的丢失。可以在执行回退操作前使用<code>git log</code>来查看记录。<br>关于<code>Linux</code>文件操作，最难的部分是关于循环语句和条件判断语句的的使用，这些语句和C语言还是有一定的区别，使用时需要注意。最后是<code>awk,grep,sed</code>的使用，这些命令可以分割文件内容进行查询和增删改的操作，需要大量的练习。<br><code>Shell</code>脚本中可以关注<code>[],&#123;&#125;,$</code>的使用，符号的组合有不同的含义，如下所示：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[] ： 逻辑判断(&quot;[&quot;实际上为指令)</span><br><span class="line">(()) ： 数值计算</span><br><span class="line">$&#123;&#125; ： 取变量的值</span><br><span class="line">$[] ： 和 $(()) 计算并将结果返回</span><br><span class="line">$() ： 运行括号中的指令并返回</span><br></pre></td></tr></table></figure>
+
+<h2 id="实验体会："><a href="#实验体会：" class="headerlink" title="实验体会："></a>实验体会：</h2><p>第一次作业初见时有一种无从下手的感觉，但在经过预习，学习新指令过后就能逐渐找到感觉。可以自行上网查询一些资料来补充自己的知识。<br>这次实验的主要目标就是要学习新的命令和参数，这些也只有在充分的练习过后才能有体会，因此充分的练习是最重要的，用过之后才可以熟练的使用。</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Morty</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://example.com/2025/03/15/BUAA-OS-Lab0-%E5%9F%BA%E7%A1%80%E6%93%8D%E4%BD%9C/">http://example.com/2025/03/15/BUAA-OS-Lab0-%E5%9F%BA%E7%A1%80%E6%93%8D%E4%BD%9C/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a target="_blank" rel="noopener" href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span>Do you believe in <strong>DESTINY</strong>?</span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/OS/"># OS</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2025/03/15/BUAA-OO-%E7%AC%AC%E4%B8%80%E5%8D%95%E5%85%83%EF%BC%9A-%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%B1%95%E5%BC%80/">BUAA-OO-第一单元： 表达式展开</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Morty | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
