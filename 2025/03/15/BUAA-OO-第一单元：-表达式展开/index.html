@@ -332,7 +332,7 @@
 <p>简单来说，第一个<code>assign</code>是为了向下递归，如果此时还包含有函数因子，则继续替换，第二个<code>assign</code>用来返回，将这一层得到的结果向上返回,用于得到最后的表达式形式。</p>
 <p>最后，我们在每一个类中都实现<code>assign</code>方法，然后在<code>Expr</code>类中调用 <code>expr = expr.assign(null);</code>来启动替换（参数<code>null</code>代表此时最上层表达式中的参数为绝对实参）</p>
 <p>经过上面的处理，我们的表达式中就不会含有函数因子了，可以使用<code>toPoly()</code>方法转换为多项式了。</p>
-<h3 id="表达式展开-1"><a href="#表达式展开-1" class="headerlink" title="表达式展开"></a>表达式展开</h3><p>在这一次作业中，我们跟新<code>Unit</code>包含的最小单元：<br>$$<br>a x^n \prod_{i} \sin(\text{Factor}<em>i) \prod</em>{i} \cos(\text{Factor}_i)<br>$$</p>
+<h3 id="表达式展开-1"><a href="#表达式展开-1" class="headerlink" title="表达式展开"></a>表达式展开</h3><p>在这一次作业中，我们跟新<code>Unit</code>包含的最小单元：<br>$$<br>ax^n \prod_i \sin(\text{Factor}_i) \prod_i \cos(\text{Factor}_i)<br>$$</p>
 <p>所以我们能将数据组成做出一定的修改：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">private BigInteger coe;</span><br><span class="line">private BigInteger exp;</span><br><span class="line">private HashMap&lt;Poly, BigInteger&gt; sinMap;</span><br><span class="line">private HashMap&lt;Poly, BigInteger&gt; cosMap;</span><br></pre></td></tr></table></figure>
 
