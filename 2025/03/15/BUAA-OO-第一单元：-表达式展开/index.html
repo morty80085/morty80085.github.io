@@ -261,7 +261,76 @@
             <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>第一单元的主题是<strong>表达式展开</strong>，主要目的是熟悉面向对象的思想，学会使用类来管理对象。本单元包括三次作业———<strong>单变量多项式展开，含有三角函数和自定义递归函数的多项式展开，含有求导因子和自定义函数的多项式展开</strong>。</p>
 <p>这三次作业的要求是<strong>层层递进</strong>的，一个好的框架是最重要的。在这篇博客中，我将对这三次作业的代码进行分析，对本人的学习心得体会进行总结。</p>
 <h1 id="第一次作业分析"><a href="#第一次作业分析" class="headerlink" title="第一次作业分析"></a>第一次作业分析</h1><p>第一次作业是关于单变量多项式的展开，在这一作业中，主要的难点是<strong>幂函数，表达式因子</strong>的展开。</p>
-<h2 id="代码UML类图"><a href="#代码UML类图" class="headerlink" title="代码UML类图"></a>代码UML类图</h2><p>本次作业的UML类图如图所示：</p>
+<h2 id="代码UML类图"><a href="#代码UML类图" class="headerlink" title="代码UML类图"></a>代码UML类图</h2><p>本次作业的UML类图如图所示：<br><img src="/../images/OOU1.1.png" alt="alt text"></p>
+<h2 id="类说明"><a href="#类说明" class="headerlink" title="类说明"></a>类说明</h2><table>
+<thead>
+<tr>
+<th>类名</th>
+<th>类型</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Expr</td>
+<td>类</td>
+<td>表示表达式或表达式因子</td>
+</tr>
+<tr>
+<td>Factor</td>
+<td>接口</td>
+<td>表示因子</td>
+</tr>
+<tr>
+<td>Lexer</td>
+<td>类</td>
+<td>词法分析器</td>
+</tr>
+<tr>
+<td>MainClass</td>
+<td>类</td>
+<td>主程序入口</td>
+</tr>
+<tr>
+<td>Num</td>
+<td>类</td>
+<td>表示数字</td>
+</tr>
+<tr>
+<td>Parser</td>
+<td>类</td>
+<td>解析器</td>
+</tr>
+<tr>
+<td>Poly</td>
+<td>类</td>
+<td>表示多项式</td>
+</tr>
+<tr>
+<td>Processor</td>
+<td>类</td>
+<td>预处理</td>
+</tr>
+<tr>
+<td>Term</td>
+<td>类</td>
+<td>表示项</td>
+</tr>
+<tr>
+<td>Token</td>
+<td>类</td>
+<td>包含基本语法单元</td>
+</tr>
+<tr>
+<td>Unit</td>
+<td>类</td>
+<td>表示单项式</td>
+</tr>
+<tr>
+<td>Var</td>
+<td>类</td>
+<td>表示变量因子</td>
+</tr>
+</tbody></table>
 <h2 id="代码架构分析"><a href="#代码架构分析" class="headerlink" title="代码架构分析"></a>代码架构分析</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Expr   = Term   | Term   [+|-] Expr</span><br><span class="line">Term   = Factor | Factor [*] Term</span><br><span class="line">Factor = Var    | Num    | PowerFactor  | ExprFactor</span><br></pre></td></tr></table></figure>
 
 <p>分析这次作业的要求后，我们可以将表达式按层分为三部分：<code>Expr</code>,<code>Term</code> ,<code>Factor</code>。<code>Factor</code>类型中又可以分出———<code>PowFactor</code>,<code>Var</code>,<code>Num</code>。基于面向对象的思想，我们要对这些类型分别建类。在<code>Expr</code>类型中使<code>ArrayList</code>来包含表达式所含有的所有<code>Term</code>，同时在<code>Term</code>中使用<code>ArrayList</code>来包含其项中所拥有的所用<code>Factor</code>。</p>
@@ -285,8 +354,8 @@
 
 <h3 id="表达式展开"><a href="#表达式展开" class="headerlink" title="表达式展开"></a>表达式展开</h3><p>经过分析可以发现，表达式最终要展开为下面这种形式：</p>
 <p>$$<br>Expr &#x3D; \sum a_i x^{n_i}<br>$$</p>
-<p>可以发现<strong>多项式</strong>中包含多个形如$ a_i x^{n_i}$的单项式。因此我们新创建两个类———<code>Poly</code>(多项式类),<code>Unit</code>(单项式类，考虑到迭代的要求，这里命名为Unit)。</p>
-<p><strong>·</strong> Unit类中有两个变量——<code>coe</code>,<code>exp</code>分别代表单项式的<strong>系数</strong>和<strong>x的指数</strong>，同时可以使用<code>toPoly()</code>转换为<strong>coe*x^exp</strong>的形式。</p>
+<p>可以发现，<strong>多项式</strong>中包含多个形如$ a_i x^{n_i}$的单项式。因此我们新创建两个类———<code>Poly</code>(多项式类),<code>Unit</code>(单项式类，考虑到迭代的要求，这里命名为Unit)。</p>
+<p><strong>·</strong> Unit类中有两个变量——<code>coe</code>,<code>exp</code>分别代表单项式的<strong>系数</strong>和<strong>x的指数</strong>，同时可以使用<code>toPoly()</code>转换为**“coe*x^exp”**的形式。</p>
 <p><strong>·</strong> Poly类中有一个<code>ArrayList</code>容器来存储所有的<code>Unit</code>,同时还有<code>addPoly()</code>,<code>mulPoly()</code>,<code>powPoly()</code>等方法来实现多项式之间的运算，最后通过<code>printPoly()</code>以字符串形式输出。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">public class Poly &#123;</span><br><span class="line">    public Poly addPoly(Poly newPoly) &#123;&#125;</span><br><span class="line">    public Poly mulPoly(Poly newPoly) &#123;&#125;</span><br><span class="line">    public Poly powPoly(int n) &#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -301,14 +370,38 @@
 <h1 id="第二次作业分析"><a href="#第二次作业分析" class="headerlink" title="第二次作业分析"></a>第二次作业分析</h1><p>第二次作业在第一次作业的基础上加入了<strong>三角函数</strong>和<strong>自定义递归函数</strong>，复杂度较上一次进一步提高。<br>自定义递归函数形式如下：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">f&#123;0&#125;(y) = y</span><br><span class="line">f&#123;1&#125;(y) = 1</span><br><span class="line">f&#123;n&#125;(y) = 1*f&#123;n-1&#125;(sin(y)) - 4*f&#123;n-2&#125;(y^2) + 1</span><br><span class="line">///////////////////////////////////////////////</span><br><span class="line">f&#123;0&#125;(x, y) = x - y</span><br><span class="line">f&#123;n&#125;(x, y) = 0*f&#123;n-1&#125;(x, y) + 35*f&#123;n-2&#125;(x, y^2)</span><br><span class="line">f&#123;1&#125;(x, y) = x^3 + y</span><br></pre></td></tr></table></figure>
 
-<h2 id="代码UML类图-1"><a href="#代码UML类图-1" class="headerlink" title="代码UML类图"></a>代码UML类图</h2><p>本次代买的UML类图如下所示：</p>
+<h2 id="代码UML类图-1"><a href="#代码UML类图-1" class="headerlink" title="代码UML类图"></a>代码UML类图</h2><p>本次代买的UML类图如下所示：<br><img src="/../images/OOU1.2.png" alt="alt text"></p>
+<h2 id="新增类说明"><a href="#新增类说明" class="headerlink" title="新增类说明"></a>新增类说明</h2><table>
+<thead>
+<tr>
+<th>类名</th>
+<th>类型</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Cos&#x2F;SinFactor</td>
+<td>类</td>
+<td>表示三角函数因子</td>
+</tr>
+<tr>
+<td>Define</td>
+<td>类</td>
+<td>函数解析器，这是一个静态类</td>
+</tr>
+<tr>
+<td>FuncFactor</td>
+<td>类</td>
+<td>表示函数因子</td>
+</tr>
+</tbody></table>
 <h2 id="代码架构分析-1"><a href="#代码架构分析-1" class="headerlink" title="代码架构分析"></a>代码架构分析</h2><p>在这次作业中，仍然可以使用<strong>递归下降法</strong>，只需要添加几种<strong>基本语法单元</strong>：<code>SIN</code>,<code>COS</code>,<code>FUNC</code>, <code>COMMA</code>,本次作业的主要难点如下：</p>
 <p><strong>·<strong>如何解析</strong>三角函数</strong>？<br><strong>·<strong>如何展开</strong>自定义递归函数</strong>？如何将实参带入函数定义式中去？</p>
 <h3 id="三角函数的解析"><a href="#三角函数的解析" class="headerlink" title="三角函数的解析"></a>三角函数的解析</h3><p>在本次作业中，我们可以新建两个新的类：<code>SinFactor</code>和<code>CosFactor</code>,类中都有两个成员变量：<strong>Core</strong>(三角函数括号内的内容)，<strong>exp</strong>(三角函数的指数部分)。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">// CosFactor.java</span><br><span class="line">public class CosFactor implements Factor &#123;</span><br><span class="line">    private Factor cosCore;</span><br><span class="line">    private BigInteger exp;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>同时我们在Paser中添加了<code>parseSinFactor</code>和<code>parseCosFactor</code>两个新的方法。当我们发现当前解析的基本语法单元式是<code>sin</code>或<code>cos</code>时，就调用这两种方法，然后将结果保存在<code>SinFactor</code>对象或<code>CosFactor</code>对象返回即可。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">// Parser.java</span><br><span class="line">public CosFactor parseCosFactor() &#123;</span><br><span class="line">        ......</span><br><span class="line">        Factor cosCore = parseExpr();</span><br><span class="line">        .......</span><br><span class="line">        CosFactor newCos = new CosFactor(cosCore,...);</span><br><span class="line">        return newCos;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">// Parser.java</span><br><span class="line">public CosFactor parseCosFactor() &#123;</span><br><span class="line">        ......</span><br><span class="line">        Factor cosCore = parseExpr();</span><br><span class="line">        ......</span><br><span class="line">        CosFactor newCos = new CosFactor(cosCore,...);</span><br><span class="line">        return newCos;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 <h3 id="自定义递归函数"><a href="#自定义递归函数" class="headerlink" title="自定义递归函数"></a>自定义递归函数</h3><p>为了方便管理和解析自定义函数，我新建了一个<code>Define</code>工具类，主要负责<strong>自定义函数的定义和调用</strong>。这是一个静态类，所以我们在使用时不需要实例化：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">private static ArrayList&lt;String&gt; Formal = new ArrayList&lt;&gt;();</span><br><span class="line">private static HashMap&lt;String, String&gt; Expression = new HashMap&lt;&gt;();</span><br></pre></td></tr></table></figure>
@@ -332,7 +425,7 @@
 <p>简单来说，第一个<code>assign</code>是为了向下递归，如果此时还包含有函数因子，则继续替换，第二个<code>assign</code>用来返回，将这一层得到的结果向上返回,用于得到最后的表达式形式。</p>
 <p>最后，我们在每一个类中都实现<code>assign</code>方法，然后在<code>Expr</code>类中调用 <code>expr = expr.assign(null);</code>来启动替换（参数<code>null</code>代表此时最上层表达式中的参数为绝对实参）</p>
 <p>经过上面的处理，我们的表达式中就不会含有函数因子了，可以使用<code>toPoly()</code>方法转换为多项式了。</p>
-<h3 id="表达式展开-1"><a href="#表达式展开-1" class="headerlink" title="表达式展开"></a>表达式展开</h3><p>在这一次作业中，我们跟新<code>Unit</code>包含的最小单元：<br>$$<br>ax^n \prod_i \sin(\text{Factor}_i) \prod_i \cos(\text{Factor}_i)<br>$$</p>
+<h3 id="表达式展开-1"><a href="#表达式展开-1" class="headerlink" title="表达式展开"></a>表达式展开</h3><p>在这一次作业中，我们跟新<code>Unit</code>包含的最小单元：<br>$$<br>a x^n \prod_{i} \sin(\text{Factor}<em>i) \prod</em>{i} \cos(\text{Factor}_i)<br>$$</p>
 <p>所以我们能将数据组成做出一定的修改：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">private BigInteger coe;</span><br><span class="line">private BigInteger exp;</span><br><span class="line">private HashMap&lt;Poly, BigInteger&gt; sinMap;</span><br><span class="line">private HashMap&lt;Poly, BigInteger&gt; cosMap;</span><br></pre></td></tr></table></figure>
 
@@ -341,7 +434,7 @@
 <h1 id="第三次作业分析"><a href="#第三次作业分析" class="headerlink" title="第三次作业分析"></a>第三次作业分析</h1><p>这一次作业中，添加了<strong>自定义函数</strong>和<strong>求导因子</strong>。虽然听起来感觉很复杂，但只要掌握好了<strong>递归下降</strong>的方法，我们都可以轻松解决。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">// 自定义函数样例</span><br><span class="line">g(x) = h(x) + 6</span><br><span class="line">h(x) = g(x) * sin(x)</span><br><span class="line">// 最终输入样例</span><br><span class="line">1</span><br><span class="line">g(x,y)=x*y</span><br><span class="line">1</span><br><span class="line">f&#123;0&#125;(x)=x^2</span><br><span class="line">f&#123;1&#125;(x)=1</span><br><span class="line">f&#123;n&#125;(x)=2*f&#123;n-1&#125;(x^2)+3*f&#123;n-2&#125;(x^3)+-1</span><br><span class="line">g(f&#123;2&#125;(x),dx(x^2))</span><br></pre></td></tr></table></figure>
 
-<h2 id="代码UML类图-2"><a href="#代码UML类图-2" class="headerlink" title="代码UML类图"></a>代码UML类图</h2><p>本次代码的UML类图如下所示：</p>
+<h2 id="代码UML类图-2"><a href="#代码UML类图-2" class="headerlink" title="代码UML类图"></a>代码UML类图</h2><p>本次代码的UML类图如下所示：<br><img src="/../images/OOU1.3.png" alt="alt text"></p>
 <h2 id="代码框架分析"><a href="#代码框架分析" class="headerlink" title="代码框架分析"></a>代码框架分析</h2><h3 id="自定义函数"><a href="#自定义函数" class="headerlink" title="自定义函数"></a>自定义函数</h3><p>自定义函数的处理十分简单，我们只需要在<code>Define</code>中加如新的函数，然后按照我们之前处理<strong>自定义递归函数</strong>一样处理就行了。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">// 自定义函数</span><br><span class="line">private static final ArrayList&lt;String&gt; GFormal = new ArrayList&lt;&gt;();  </span><br><span class="line">// 自定义函数</span><br><span class="line">private static final ArrayList&lt;String&gt; HFormal = new ArrayList&lt;&gt;();  </span><br><span class="line">// 解析并获得自定义函数</span><br><span class="line">public static void getSelfDefineFuncFormal(String expr) &#123;&#125;</span><br></pre></td></tr></table></figure>
 
@@ -349,9 +442,14 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">// Expr.java</span><br><span class="line">public Expr diff() &#123;</span><br><span class="line">    Expr exprNew = new Expr();</span><br><span class="line">    for (Term term : terms) &#123;</span><br><span class="line">        Expr diffExpr = term.diff();</span><br><span class="line">        exprNew.addExpr(diffExpr);</span><br><span class="line">    &#125;</span><br><span class="line">    return exprNew;</span><br><span class="line">&#125;</span><br><span class="line">// Term.java</span><br><span class="line">public Expr diff() &#123;</span><br><span class="line">    Expr diffExpr = new Expr();</span><br><span class="line">    for (int i = 0; i &lt; factors.size(); i++) &#123;</span><br><span class="line">        // do something</span><br><span class="line">    &#125;</span><br><span class="line">    return diffExpr;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 <p>以<code>Expr</code>和<code>Term</code>为例，<code>Expr</code>的求导方法就是将自己包含的<code>Term</code>求导后相加，<code>Term</code>则是对包含的<code>Factor</code>求导，要注意，<code>Term</code>求导后返回的是<code>Expr</code>类型。<br>这样为每个类中都编写求导方法，结合起来我们就能获得最后的结果。</p>
-<h2 id="优化-2"><a href="#优化-2" class="headerlink" title="优化"></a>优化</h2><p>可以考虑使用一些简单的三角函数公式进行化简，如<code>sin(x)^2+cos(x)^2=1</code>,<code>sin(0)=0</code>,<code>cos(0)=1</code>,<code>2*sin(x)*cos(x)=sin(2*x)</code>等。</p>
-<h1 id="框架设计体验"><a href="#框架设计体验" class="headerlink" title="框架设计体验"></a>框架设计体验</h1><p>在这三次作业中，我在第二次作业中重构了自己的框架。一方面是为了迎合任务的需求，另一方面是为了下一次作业做准备。<br>在重构中，我也没有大改，主要得益于<strong>递归下降算法</strong>的优势。这一次作业也让我认识到了好的框架的重要性。不能仅仅着眼与眼前，要有大局观。</p>
-<h1 id="心得体会"><a href="#心得体会" class="headerlink" title="心得体会"></a>心得体会</h1><p>Unit1的强度还是很大的，一周一次的迭代作业让人感到压力很大。在陷入迷惑时，不妨查看一下往届学长的博客或和同学讨论。同时，体会到从无到有的创造也是十分有成就感的一件事。</p>
+<h2 id="优化-2"><a href="#优化-2" class="headerlink" title="优化"></a>优化</h2><p>可以考虑使用一些简单的三角函数公式进行化简，如<code>sin(x)^2+cos(x)^2=1</code>,<code>sin(0)=0</code>,<code>cos(0)=1</code>,<code>2*sin(x)*cos(x)=sin(2*x)</code>等。这些优化需要我们在<code>Poly</code>类中添加新的方法，遍历整个多项式，记录能合并的项，判断合并后是否长度会减少然后进行操作，但这一块也是bug的重灾区，优化时要谨慎。</p>
+<h1 id="Bug与互测"><a href="#Bug与互测" class="headerlink" title="Bug与互测"></a>Bug与互测</h1><p>在本次作业中，我在第二次强测和互测中出现了两个Bug。第一个与深克隆有关，在写<code>CosFactor</code>时由于一时疏忽，返回了浅克隆的对象，导致了程序的嵌套循环，使程序陷入到了死循环中去。第二个Bug和重写的<code>HashCode</code>有关，重写的<code>HashCode</code>计算可能会把两个不一样的表达式计算为一样导致错误的合并；还有一点是在计算完HashCode进行比较后也不要修改自定义类Key的值，否则可能在查找的时候会出现“空指针”的情况。</p>
+<p>可以发现这两个Bug都与<code>Poly</code>类有关。<code>Poly</code>类也是整个代码框架中最复杂的一个类。在这里也需要仔细检查。如果想要化简复杂度，实际上可以将<code>PrintPoly</code>方法转为各类中的<code>toString()</code>方法。</p>
+<p>在互测中，我主要在边界处设计测试样例，在互测中可以发现一些同学在类似<code>sin(0)^0,0^0</code>的地方出现错误。同时一些嵌套如多层递归函数或三角函数可能会使一些同学的代码陷入<code>TLE</code>中，这些可能是将一些基本单元反复带入嵌套中所导致的。</p>
+<h1 id="框架设计体验"><a href="#框架设计体验" class="headerlink" title="框架设计体验"></a>框架设计体验</h1><p>在这三次作业中，我在第二次作业中重构了自己的框架。一方面是为了迎合任务的需求，另一方面是为了下一次作业做准备。在这一次重构中，我重写了<code>PowFactor</code>和<code>Parser</code>类，在<code>Parser</code>中加入了<code>getFactor</code>方法。这个方法实际上是在<code>Term</code>和<code>Factor</code>之间加了一个新“层”,将所有的<code>Factor</code>传入<code>Term</code>前都转换为<code>PowFactor</code>(如果没有指数，则直接加入指数为一的<code>PowFactor</code>),方便后面的求导和转换为多项式。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">// Parser.java</span><br><span class="line">public Factor getFactor() &#123;</span><br><span class="line">    Factor factor = parceFactor();</span><br><span class="line">    if (!lexer.isEnd() &amp;&amp; lexer.getCurToken().getType() == Token.Type.POW) &#123;</span><br><span class="line">        // do something</span><br><span class="line">        return new PowFactor(factor, size);</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        return new PowFactor(factor, BigInteger.ONE);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在重构中，我也没有大改，主要得益于<strong>递归下降算法</strong>的优势。这一次作业也让我认识到了好的框架的重要性。不能仅仅着眼与眼前，要有大局观。<br>未来的迭代可能会涉及到更多的函数，对数函数，错误的输入等等。如果不限函数数量，我们可以更新<code>Define</code>方法，让它不断扫描直到获得所有函数定义。如果加入新元素，在未来的框架中，只需要在最底层加入相应的基本基础类，并为它写全新的方法。如果未来会有错误输入，我们只需要在预处理时就进行判断，就可以输出有错误输入的提示。</p>
+<h1 id="心得体会"><a href="#心得体会" class="headerlink" title="心得体会"></a>心得体会</h1><p>Unit1的强度还是很大的，一周一次的迭代作业让人感到压力很大，时间也非常紧张。但在写代码之前一定要做好框架的设计。否则会在打代码的过程中遇到各种各样的问题。这些问题中的很大一部分都可以通过事先规划好完整的框架来避免的。<br>在陷入迷惑时，不妨查看一下往届学长的博客或和同学讨论。同时，体会到从无到有的创造也是十分有成就感的一件事。</p>
 
         </div>
 
