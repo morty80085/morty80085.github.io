@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Morty">
+
+
+
+
+
+<title>BUAA-OS-Lab1-内核、Boot和Print | Morty&#39;s Dimension</title>
+
+
+
+    <link rel="icon" href="/morty_4Hk_2.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        <!-- MathJax配置，可通过单美元符号书写行内公式等 -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+    "HTML-CSS": {
+        preferredFont: "TeX",
+        availableFonts: ["STIX","TeX"],
+        linebreaks: { automatic:true },
+        EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50)
+    },
+    tex2jax: {
+        inlineMath: [ ["$", "$"], ["\\(","\\)"] ],
+        processEscapes: true,
+        ignoreClass: "tex2jax_ignore|dno",
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+        equationNumbers: { autoNumber: "AMS" },
+        noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } },
+        Macros: { href: "{}" }
+    },
+    messageStyle: "none"
+    });
+</script>
+<!-- 给MathJax元素添加has-jax class -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+<!-- 通过连接CDN加载MathJax的js代码 -->
+<script type="text/javascript" async
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+    
+
+
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body>
+    <script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    </script>
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">Morty&#39;s Blog</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Morty&#39;s Blog</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    var tocbot_timer;
+    var DEPTH_MAX = 6; // 为 6 时展开所有
+    var tocbot_default_config = {
+        tocSelector: '.tocbot-list',
+        contentSelector: '.post-content',
+        headingSelector: 'h1, h2, h3, h4, h5',
+        orderedList: false,
+        scrollSmooth: true,
+        onClick: extend_click,
+    };
+
+    function extend_click() {
+        clearTimeout(tocbot_timer);
+        tocbot_timer = setTimeout(function() {
+            tocbot.refresh(obj_merge(tocbot_default_config, {
+                hasInnerContainers: true
+            }));
+        }, 420); // 这个值是由 tocbot 源码里定义的 scrollSmoothDuration 得来的
+    }
+
+    document.ready(function() {
+        tocbot.init(obj_merge(tocbot_default_config, {
+            collapseDepth: 1
+        }));
+    });
+
+    function expand_toc() {
+        var b = document.querySelector('.tocbot-toc-expand');
+        var expanded = b.getAttribute('data-expanded');
+        expanded ? b.removeAttribute('data-expanded') : b.setAttribute('data-expanded', true);
+        tocbot.refresh(obj_merge(tocbot_default_config, {
+            collapseDepth: expanded ? 1 : DEPTH_MAX
+        }));
+        b.innerText = expanded ? 'Expand all' : 'Collapse all';
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+    function obj_merge(target, source) {
+        for (var item in source) {
+            if (source.hasOwnProperty(item)) {
+                target[item] = source[item];
+            }
+        }
+        return target;
+    }
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">BUAA-OS-Lab1-内核、Boot和Print</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Morty</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">March 29, 2025&nbsp;&nbsp;14:11:42</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/">操作系统</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="OS-Lab1-实验报告"><a href="#OS-Lab1-实验报告" class="headerlink" title="OS_Lab1 实验报告"></a>OS_Lab1 实验报告</h1><h2 id="思考题"><a href="#思考题" class="headerlink" title="思考题"></a>思考题</h2><h3 id="Thinking-1-1"><a href="#Thinking-1-1" class="headerlink" title="Thinking 1.1"></a>Thinking 1.1</h3><p><strong>Q:在阅读 附录中的编译链接详解 以及本章内容后，尝试分别使用实验环境中<br>的原生 x86 工具链（gcc、ld、readelf、objdump 等）和 MIPS 交叉编译工具链（带有<br>mips-linux-gnu- 前缀，如 mips-linux-gnu-gcc、mips-linux-gnu-ld），重复其中的编<br>译和解析过程，观察相应的结果，并解释其中向 objdump 传入的参数的含义。</strong></p>
+<p><strong>A：</strong><br>我们首先新建一个有输出的C语言函数：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line"></span><br><span class="line"> int main()</span><br><span class="line"> &#123;</span><br><span class="line">        int a = 1;</span><br><span class="line">        int b = 2;</span><br><span class="line">        int c = a + b;</span><br><span class="line">        printf(&quot;%d&quot;,c);</span><br><span class="line">        return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>使用<strong>只编译不链接和反汇编</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">gcc -c sum.c</span><br><span class="line">objdump -DS sum.o &gt; preSum.txt </span><br></pre></td></tr></table></figure>
+<p><img src="/../images/OS-Lab1-1.png" alt="alt text"><br>main函数部分如上，可以看到这里<code>call</code>指令的地址为一串0</p>
+<p>然后使用<strong>正常编译</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">gcc -o sum sum.c</span><br><span class="line">objdump -DS sum &gt; finalSum.txt</span><br></pre></td></tr></table></figure>
+<p><img src="/../images/OS-Lab1-2.png" alt="alt text"><br>可以看到此时的地址已经有正确的填入。</p>
+<table>
+<thead>
+<tr>
+<th>基本信息</th>
+<th>参数</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td></td>
+<td>-f</td>
+<td>显示文件头信息</td>
+</tr>
+<tr>
+<td></td>
+<td>-p</td>
+<td>显示ELF文件私有头部信息</td>
+</tr>
+<tr>
+<td></td>
+<td>-x</td>
+<td>显示所有头部信息</td>
+</tr>
+<tr>
+<td></td>
+<td>-s</td>
+<td>显示所有段的完整内容</td>
+</tr>
+<tr>
+<td></td>
+<td>-h</td>
+<td>显示各个段的信息</td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th>反汇编</th>
+<th>参数</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td></td>
+<td>-d</td>
+<td>反汇编<code>.text</code>段</td>
+</tr>
+<tr>
+<td></td>
+<td>-D</td>
+<td>反汇编整个文件</td>
+</tr>
+<tr>
+<td></td>
+<td>-S</td>
+<td>结合调试信息，将反汇编代码与C&#x2F;C++源代码对应</td>
+</tr>
+<tr>
+<td></td>
+<td>-M</td>
+<td>指定反汇编选项</td>
+</tr>
+</tbody></table>
+<h3 id="Thinking-1-2"><a href="#Thinking-1-2" class="headerlink" title="Thinking 1.2"></a>Thinking 1.2</h3><p><strong>Q:思考下述问题：<br>• 尝试使用我们编写的 readelf 程序，解析之前在 target 目录下生成的内核 ELF 文<br>件。<br>• 也许你会发现我们编写的 readelf 程序是不能解析 readelf 文件本身的，而我们刚<br>才介绍的系统工具 readelf 则可以解析，这是为什么呢？(提示：尝试使用 readelf<br>-h，并阅读 tools&#x2F;readelf 目录下的 Makefile，观察 readelf 与 hello 的不同)</strong></p>
+<p><strong>A:</strong><br><img src="/../images/OS-Lab1-3.png" alt="alt text"><br>使用我们编写的readelf解析target下的内核。</p>
+<p><img src="/../images/OS-Lab1-4.png" alt="alt text"><br><img src="/../images/OS-Lab1-5.png" alt="alt text"><br>可以发现两个文件的类别分别为ELF32和ELF64，文件的类别影响了readelf是否可以解析文件。<br>通过阅读<code>Malefile</code>可以知道：<br><code>hello</code> 使用了 <code>-m32</code> 选项，它会生成 <code>32</code> 位的代码，但不会影响字节序。<br>readelf 没有指定 <code>-m32</code>，可能是 <code>64</code> 位（<code>x86_64</code>）。同时<code>hello</code>是静态的。</p>
+<h3 id="Thinking-1-3"><a href="#Thinking-1-3" class="headerlink" title="Thinking 1.3"></a>Thinking 1.3</h3><p><strong>Q:Thinking 1.3 在理论课上我们了解到，MIPS 体系结构上电时，启动入口地址为 0xBFC00000<br>（其实启动入口地址是根据具体型号而定的，由硬件逻辑确定，也有可能不是这个地址，但<br>一定是一个确定的地址），但实验操作系统的内核入口并没有放在上电启动地址，而是按照<br>内存布局图放置。思考为什么这样放置内核还能保证内核入口被正确跳转到？<br>（提示：思考实验中启动过程的两阶段分别由谁执行。）</strong></p>
+<p><strong>A:</strong> 处理器复位后，程序计数器（PC） 被设置为 <code>0xBFC00000</code>,此地址存放着引导代码，<code>stage2</code> 的代码复制到 <code>RAM</code> 空间，并且设置堆栈，最后跳转到 <code>stage2</code> 的入口函数。在<code>stage2</code>载入内核和根文件系统,跳转到内核入口，指引内核入口被正确的跳转到。<br>具体来说就是将内核加载到我们预期的位置。与此同时kernel.lds规定了 ENTRY(_start)，通过_start函数跳转到函数。</p>
+<h2 id="实验难点分析："><a href="#实验难点分析：" class="headerlink" title="实验难点分析："></a>实验难点分析：</h2><p>实验的第一个难点在于指针的运用：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">const void *sh_table;</span><br><span class="line">Elf32_Half sh_entry_count;</span><br><span class="line">Elf32_Half sh_entry_size;</span><br><span class="line">/* Exercise 1.1: Your code here. (1/2) */</span><br><span class="line">sh_table = (void*)((char *)binary + ehdr-&gt;e_shoff);</span><br><span class="line">sh_entry_count = ehdr-&gt;e_shnum;</span><br><span class="line">sh_entry_size = ehdr-&gt;e_shentsize;</span><br></pre></td></tr></table></figure>
+<p>这里一个易错点是<code>binary</code>是<code>void*</code>类型，要先变为<code>char *</code>类型才能运算。指针也是C语言中的难点。</p>
+<p>实验第二个难点在于理解printk中各个参数的含义：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">int width; // 标记输出宽度</span><br><span class="line">int long_flag; // 标记是否为 long 型</span><br><span class="line">int neg_flag; // 标记是否为负数</span><br><span class="line">int ladjust; // 标记是否左对齐</span><br><span class="line">char padc; // 填充多余位置所用的字符</span><br></pre></td></tr></table></figure>
+<p>只要掌握了这些变量的含义，然后在正确的位置将他们解析出来，就能完成任务。<br>有一个需要注意的点就是如果输入为负数，那么最后传入函数的数为正数，但<code>neg_flag</code>为一。</p>
+<h2 id="心得体会"><a href="#心得体会" class="headerlink" title="心得体会"></a>心得体会</h2><p>Lab1主要是关于操作系统启动的基本流程、学习ELF文件的结构和功能，以及最终完成一个printf函数的书写。这一次实验初见感觉很难，有大量的概念和知识点。但是在耐下性子后仔细研究就会发现一个清晰的架构，启动的流程也是按照先后依次执行，有着清晰的脉络。<br>本次实验的一个困难是使用跳板机时阅读代码很难，后使用在<code>gitlab</code>端阅读“解决”了这个问题。总而言之，这一次的实验还是收获颇多。</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Morty</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="http://example.com/2025/03/29/BUAA-OS-Lab1-%E5%86%85%E6%A0%B8%E3%80%81Boot%E5%92%8CPrint/">http://example.com/2025/03/29/BUAA-OS-Lab1-%E5%86%85%E6%A0%B8%E3%80%81Boot%E5%92%8CPrint/</a></span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>License:</span>
+                        <span>Copyright (c) 2019 <a target="_blank" rel="noopener" href="http://creativecommons.org/licenses/by-nc/4.0/">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span>Do you believe in <strong>DESTINY</strong>?</span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/OS/"># OS</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2025/03/15/BUAA-OS-Lab0-%E5%9F%BA%E7%A1%80%E6%93%8D%E4%BD%9C/">BUAA-OS-Lab0: 基础操作</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Morty | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+
+</html>
